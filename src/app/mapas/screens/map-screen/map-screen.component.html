@@ -1,0 +1,10 @@
+@if( !isUserLocationReady){
+  <app-loading></app-loading>
+}@else {
+<ng-content>
+  <app-map-view></app-map-view>
+  <app-btn-my-location></app-btn-my-location>
+</ng-content>
+}
+
+<app-angular-logo></app-angular-logo>
