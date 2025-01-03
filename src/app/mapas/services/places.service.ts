@@ -2,6 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Feature, PlacesResponse } from '../interfaces/lases';
 import { PlacesAlpiClient } from '../api/placesAlpiClient';
+import { MapService } from './maps.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,7 @@ export class PlacesService {
     return !!this.userLocation;
   }
 
-  constructor(private placesApi: PlacesAlpiClient) {
+  constructor(private placesApi: PlacesAlpiClient, private mapService: MapService) {
     this.getUserLocation();
   }
 
@@ -38,7 +39,6 @@ export class PlacesService {
         },
         (err) => {
           console.error('Error al obtener la ubicación:', err);
-          alert('No se pudo obtener la ubicación del usuario.');
           reject(err);
         },
         {
@@ -52,10 +52,16 @@ export class PlacesService {
 
   getPlacesByQuery(query: string = '') {
 
+    if(query.length === 0){
+      this.isLoadingPlaces = false;
+      this.places = [];
+      return;
+    }
+
     if(!this.userLocation) throw new Error('No se ha obtenido la ubicación del usuario');
     this.isLoadingPlaces = true;
 
-    this.placesApi.get<PlacesResponse>(`${query}`, {
+    this.placesApi.get<PlacesResponse>(`/${query}.json`, {
       params: {
         proximity: this.userLocation.join(','),
       }
@@ -63,6 +69,7 @@ export class PlacesService {
     .subscribe(resp =>{
       this.isLoadingPlaces = false;
       this.places = resp.features;
+      this.mapService.createMarkerFromPlaces(this.places);
     })
   }
 }

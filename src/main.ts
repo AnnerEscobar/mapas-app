@@ -3,7 +3,6 @@ import { AppModule } from './app/app.module';
 import mapboxgl from 'mapbox-gl';
 
 if(!navigator.geolocation){
-  alert('Navegador no soprota la geolocalización');
   console.log('error desde el main')
   throw new Error('Navegador no soprota la geolocalización');
 

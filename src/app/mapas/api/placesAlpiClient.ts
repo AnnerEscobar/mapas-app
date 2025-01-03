@@ -10,7 +10,7 @@ import { environment } from "../../environments/environment.prod";
 
 export class PlacesAlpiClient extends HttpClient{
 
-  public baseUrl: string = 'https://api.mapbox.com/search/geocode/v6/forward?q=';
+  public baseUrl: string = 'https://api.mapbox.com/geocoding/v5/mapbox.places';
 
   constructor(handler: HttpHandler){
     super(handler);
@@ -26,9 +26,10 @@ export class PlacesAlpiClient extends HttpClient{
   }){
 
     url = this.baseUrl + url;
+
     return super.get<T>(url, {
       params: {
-        limit: '4',
+        limit: '5',
         language: 'es',
         access_token: environment.apikey,
         ...options?.params
