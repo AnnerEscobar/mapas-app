@@ -4,6 +4,7 @@ import { BrowserModule, provideClientHydration, withEventReplay } from '@angular
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { MapasModule } from './mapas/mapas.module';
+import { HttpClientModule } from '@angular/common/http';
 
 @NgModule({
   declarations: [
@@ -12,7 +13,8 @@ import { MapasModule } from './mapas/mapas.module';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    MapasModule
+    MapasModule,
+    HttpClientModule,
   ],
   providers: [
     provideClientHydration(withEventReplay())

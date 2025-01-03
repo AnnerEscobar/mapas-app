@@ -1,4 +1,7 @@
+import { HttpClient } from '@angular/common/http';
 import { Injectable } from '@angular/core';
+import { Feature, PlacesResponse } from '../interfaces/lases';
+import { PlacesAlpiClient } from '../api/placesAlpiClient';
 
 @Injectable({
   providedIn: 'root'
@@ -7,16 +10,18 @@ export class PlacesService {
 
   public userLocation?: [number, number];
 
+  public isLoadingPlaces = false;
+  public places: Feature[] = [];
+
   get isUserLocationReady(): boolean {
     return !!this.userLocation;
   }
 
-  constructor() {}
+  constructor(private placesApi: PlacesAlpiClient) {
+    this.getUserLocation();
+  }
 
-  /**
-   * Obtiene la ubicación del usuario utilizando la API de Geolocalización del navegador.
-   * @returns Una promesa que resuelve con las coordenadas [latitude, longitude].
-   */
+
   public async getUserLocation(): Promise<[number, number]> {
     return new Promise((resolve, reject) => {
       if (!navigator.geolocation) {
@@ -43,5 +48,21 @@ export class PlacesService {
         }
       );
     });
+  }
+
+  getPlacesByQuery(query: string = '') {
+
+    if(!this.userLocation) throw new Error('No se ha obtenido la ubicación del usuario');
+    this.isLoadingPlaces = true;
+
+    this.placesApi.get<PlacesResponse>(`${query}`, {
+      params: {
+        proximity: this.userLocation.join(','),
+      }
+    })
+    .subscribe(resp =>{
+      this.isLoadingPlaces = false;
+      this.places = resp.features;
+    })
   }
 }
